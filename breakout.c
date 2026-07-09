@@ -19,8 +19,7 @@ typedef struct Ball {
 	Color color;
 } Ball;
 
-int main(void)
-{
+int main(void) {
 	int screenWidth = 800;
 	int screenHeight = 600;
 
@@ -51,25 +50,34 @@ int main(void)
 
 		ball.x += ball.speedX;
 		ball.y += ball.speedY;
+
+		// if the ball hits left
 		if (ball.x < 0) {
 			ball.x = 0;
 			ball.speedX *= -1;
 		}
+
+		// if the ball hits right
 		if (ball.x > (screenWidth - ball.radius)) {
 			ball.x = (screenWidth - ball.radius);
-			ball.speedX *= 1;
+			ball.speedX *= -1;
 		}
+
+		// if the ball hits the top
 		if (ball.y < 0) {
 			ball.y = 0;
 			ball.speedY *= -1;
 		}
+
+		// if the ball hits the bottom
 		if (ball.y > (screenHeight - ball.radius)) {
 			memcpy(winnerText, "You lose", 9);
 		}
+		
+		// if the ball hits the paddle
 		if (CheckCollisionCircleRec((Vector2){ball.x, ball.y}, ball.radius, playerRec)) {
 			if (ball.speedY > 0) {
 				ball.speedY *= -1;
-				ball.speedX *= -1;
 			}
 		}
 
