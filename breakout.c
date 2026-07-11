@@ -19,6 +19,16 @@ typedef struct Ball {
 	Color color;
 } Ball;
 
+typedef struct Brick {
+	int x;
+	int y;
+	int width;
+	int height;
+	bool isHit;
+} Brick;
+
+void drawBricks(Brick bricks[], size_t bricksSize);
+
 int main(void) {
 	int screenWidth = 800;
 	int screenHeight = 600;
@@ -30,6 +40,10 @@ int main(void) {
 	Rectangle playerRec = {player.x, player.y, player.width, player.height};
 
 	Ball ball = {screenWidth / 2, screenHeight / 2, 10, 5, 5, WHITE};
+
+	Brick rowOfBricks[1] = {
+		{ .x = 100, .y = 100, .width = 50, .height = 50, .isHit = false },
+	};
 
 	char winnerText[30] = { 0 };
 
@@ -83,6 +97,7 @@ int main(void) {
 
 		BeginDrawing();
 		ClearBackground(BLACK);
+		drawBricks(rowOfBricks, sizeof(rowOfBricks));
 		DrawRectangleRec(playerRec, player.color);
 		DrawCircle(ball.x, ball.y, ball.radius, ball.color);
 		EndDrawing();
@@ -91,4 +106,11 @@ int main(void) {
 
 	CloseWindow();
 	return 0;
+}
+
+void drawBricks(Brick bricks[], size_t bricksSize) {
+	for (int i = 0; i < (int)(bricksSize / sizeof(*bricks)); i++) {
+		// This can also be written as DrawRectangle(bricks[i]->.x, etc). Old me decided to wite it this way for learning purposes.
+		DrawRectangle((*(bricks + i)).x, (*(bricks + i)).y, (*(bricks + i)).width, (*(bricks + i)).height, RAYWHITE);
+	}
 }
