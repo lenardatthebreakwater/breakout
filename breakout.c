@@ -110,7 +110,9 @@ int main(void) {
 
 void drawBricks(Brick bricks[], size_t bricksSize) {
 	for (int i = 0; i < (int)(bricksSize / sizeof(*bricks)); i++) {
-		// This can also be written as DrawRectangle(bricks[i]->.x, etc). Old me decided to wite it this way for learning purposes.
+		// This can also be written as DrawRectangle(bricks[i]->.x, etc) which is the cleaner and more prefferd way. 
+		// Old me decided to write it the olden way for learning purposes. 
+		// Olden way is more explicit and shows you whats happening.
 		DrawRectangle((*(bricks + i)).x, (*(bricks + i)).y, (*(bricks + i)).width, (*(bricks + i)).height, RAYWHITE);
 	}
 }
