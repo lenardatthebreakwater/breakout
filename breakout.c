@@ -64,14 +64,21 @@ int main(void) {
 		.color = RAYWHITE
 	};
 
-	Brick bricks[7] = {
-		{ .x = 50, .y = 50, .width = 100, .height = 80, .isHit = false },
-		{ .x = 155, .y = 50, .width = 100, .height = 80, .isHit = false },
-		{ .x = 260, .y = 50, .width = 100, .height = 80, .isHit = false },
-		{ .x = 365, .y = 50, .width = 100, .height = 80, .isHit = false },
-		{ .x = 470, .y = 50, .width = 100, .height = 80, .isHit = false },
-		{ .x = 575, .y = 50, .width = 100, .height = 80, .isHit = false },
-		{ .x = 680, .y = 50, .width = 100, .height = 80, .isHit = false },
+	// I inputted each brick's coordinates manually which is bad
+	// Gotta figure out how to improve it in the future
+	Brick bricks[12] = {
+		{ .x = 70, .y = 70, .width = 150, .height = 50, .isHit = false },
+		{ .x = 240, .y = 70, .width = 150, .height = 50, .isHit = false },
+		{ .x = 410, .y = 70, .width = 150, .height = 50, .isHit = false },
+		{ .x = 580, .y = 70, .width = 150, .height = 50, .isHit = false },
+		{ .x = 70, .y = 140, .width = 150, .height = 50, .isHit = false },
+		{ .x = 240, .y = 140, .width = 150, .height = 50, .isHit = false },
+		{ .x = 410, .y = 140, .width = 150, .height = 50, .isHit = false },
+		{ .x = 580, .y = 140, .width = 150, .height = 50, .isHit = false },
+		{ .x = 70, .y = 210, .width = 150, .height = 50, .isHit = false },
+		{ .x = 240, .y = 210, .width = 150, .height = 50, .isHit = false },
+		{ .x = 410, .y = 210, .width = 150, .height = 50, .isHit = false },
+		{ .x = 580, .y = 210, .width = 150, .height = 50, .isHit = false },
 	};
 
 	char winnerText[30] = { 0 };
@@ -138,11 +145,11 @@ int main(void) {
 		// if the ball hits the paddle
 		if (CheckCollisionCircleRec((Vector2){ .x = ball.x, .y = ball.y }, ball.radius, playerRec)) {
 			// this if guard is here because this code reruns per frame
-			// the ball and the paddle dont get uncollided or seperated immediately
-			// the code dont give an F about this and reruns immediately as a new frame starts
-			// this allows multiple collision checks to run even if the ball hasnt separated from the paddle yet
-			// leading to ball.speedY to get flipped many times
-			// the guard is there to make sure ball.speedY only gets flipped once only when the ball is incoming and its speedY value is still positive 
+			// the ball and paddle don't uncollide immediately
+			// the code doesn't give a Fook about this and reruns immediately as a new frame starts
+			// this allows multiple collision checks to run even if the ball hasn't separated from the paddle yet
+			// leading to ball.speedY getting flipped many times
+			// the guard is there to make sure ball.speedY only gets flipped once, only when the ball is incoming and its speedY value is still positive 
 			if (ball.speedY > 0) {
 				ball.speedY *= -1;
 			}
