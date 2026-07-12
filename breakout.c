@@ -63,7 +63,7 @@ int main(void) {
 		.color = GREEN
 	};
 
-	Brick rowOfBricks[1] = {
+	Brick bricks[1] = {
 		{ .x = 100, .y = 100, .width = 50, .height = 50, .isHit = false },
 	};
 
@@ -129,15 +129,21 @@ int main(void) {
 		}
 		
 		// if the ball hits the paddle
-		if (CheckCollisionCircleRec((Vector2){ball.x, ball.y}, ball.radius, playerRec)) {
+		if (CheckCollisionCircleRec((Vector2){ .x = ball.x, .y = ball.y }, ball.radius, playerRec)) {
 			if (ball.speedY > 0) {
 				ball.speedY *= -1;
 			}
 		}
 
+		for (size_t i = 0; i <sizeof(bricks) / sizeof(bricks[0]); i++) {
+			if (CheckCollisionCircleRec((Vector2){ .x = ball.x, .y = ball.y }, ball.radius, (Rectangle){ .x = bricks[i].x, .y = bricks[i].y, .width = bricks[i].width, .height = bricks[i].height })) {
+				bricks[i].isHit = true;
+			}
+		}
+	
 		BeginDrawing();
 		ClearBackground(BLACK);
-		drawBricks(rowOfBricks, sizeof(rowOfBricks));
+		drawBricks(bricks, sizeof(bricks));
 		DrawRectangleRec(playerRec, player.color);
 		DrawCircle(ball.x, ball.y, ball.radius, ball.color);
 		EndDrawing();
@@ -149,10 +155,12 @@ int main(void) {
 }
 
 void drawBricks(Brick bricks[], size_t bricksSize) {
-	for (int i = 0; i < (int)(bricksSize / sizeof(*bricks)); i++) {
+	for (size_t i = 0; i < bricksSize / sizeof(*bricks); i++) {
 		// This can also be written as DrawRectangle(bricks[i]->.x, etc) which is the cleaner and more prefferd way. 
 		// Old me decided to write it the olden way for learning purposes. 
 		// Olden way is more explicit and shows you whats happening.
-		DrawRectangle((*(bricks + i)).x, (*(bricks + i)).y, (*(bricks + i)).width, (*(bricks + i)).height, RAYWHITE);
+		if ((*(bricks + i)).isHit == false) {
+			DrawRectangle((*(bricks + i)).x, (*(bricks + i)).y, (*(bricks + i)).width, (*(bricks + i)).height, RAYWHITE);
+		}
 	}
 }
