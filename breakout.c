@@ -17,6 +17,7 @@ typedef struct Ball {
 	int speedX;
 	int speedY;
 	bool isMoving;
+	bool isLaunched;
 	Color color;
 } Ball;
 
@@ -40,7 +41,7 @@ int main(void) {
 	Player player = {
 		.x = ((screenWidth / 2) - ( 150 / 2)),
 		.y = (screenHeight - (14 + 10)),
-		.speed = 6,
+		.speed = 7,
 		.width = 150,
 		.height = 14,
 		.color = RAYWHITE
@@ -55,16 +56,22 @@ int main(void) {
 
 	Ball ball = {
 		.x = (playerRec.x + (playerRec.width / 2)),
-		.y = playerRec.y,
+		.y = playerRec.y - 15,
 		.radius= 10,
-		.speedX = 5,
-		.speedY = 5,
+		.speedX = 0,
+		.speedY = -5,
 		.isMoving = false,
-		.color = GREEN
+		.color = RAYWHITE
 	};
 
-	Brick bricks[1] = {
-		{ .x = 100, .y = 100, .width = 50, .height = 50, .isHit = false },
+	Brick bricks[7] = {
+		{ .x = 50, .y = 50, .width = 100, .height = 80, .isHit = false },
+		{ .x = 155, .y = 50, .width = 100, .height = 80, .isHit = false },
+		{ .x = 260, .y = 50, .width = 100, .height = 80, .isHit = false },
+		{ .x = 365, .y = 50, .width = 100, .height = 80, .isHit = false },
+		{ .x = 470, .y = 50, .width = 100, .height = 80, .isHit = false },
+		{ .x = 575, .y = 50, .width = 100, .height = 80, .isHit = false },
+		{ .x = 680, .y = 50, .width = 100, .height = 80, .isHit = false },
 	};
 
 	char winnerText[30] = { 0 };
@@ -130,14 +137,27 @@ int main(void) {
 		
 		// if the ball hits the paddle
 		if (CheckCollisionCircleRec((Vector2){ .x = ball.x, .y = ball.y }, ball.radius, playerRec)) {
+			// this if guard is here because this code reruns per frame
+			// the ball and the paddle dont get uncollided or seperated immediately
+			// the code dont give an F about this and reruns immediately as a new frame starts
+			// this allows multiple collision checks to run even if the ball hasnt separated from the paddle yet
+			// leading to ball.speedY to get flipped many times
+			// the guard is there to make sure ball.speedY only gets flipped once only when the ball is incoming and its speedY value is still positive 
 			if (ball.speedY > 0) {
 				ball.speedY *= -1;
+			}
+			if (ball.speedX == 0) {
+				ball.speedX = 5;
 			}
 		}
 
 		for (size_t i = 0; i <sizeof(bricks) / sizeof(bricks[0]); i++) {
-			if (CheckCollisionCircleRec((Vector2){ .x = ball.x, .y = ball.y }, ball.radius, (Rectangle){ .x = bricks[i].x, .y = bricks[i].y, .width = bricks[i].width, .height = bricks[i].height })) {
+			if (bricks[i].isHit == false && CheckCollisionCircleRec((Vector2){ .x = ball.x, .y = ball.y }, ball.radius, (Rectangle){ .x = bricks[i].x, .y = bricks[i].y, .width = bricks[i].width, .height = bricks[i].height })) {
+				if (ball.speedX == 0) {
+					ball.speedX = 5;
+				}
 				bricks[i].isHit = true;
+				ball.speedY *= -1;
 			}
 		}
 	
@@ -157,7 +177,7 @@ int main(void) {
 void drawBricks(Brick bricks[], size_t bricksSize) {
 	for (size_t i = 0; i < bricksSize / sizeof(*bricks); i++) {
 		// This can also be written as DrawRectangle(bricks[i]->.x, etc) which is the cleaner and more prefferd way. 
-		// Old me decided to write it the olden way for learning purposes. 
+		// I decided to write it the olden way for learning purposes. 
 		// Olden way is more explicit and shows you whats happening.
 		if ((*(bricks + i)).isHit == false) {
 			DrawRectangle((*(bricks + i)).x, (*(bricks + i)).y, (*(bricks + i)).width, (*(bricks + i)).height, RAYWHITE);
