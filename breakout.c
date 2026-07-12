@@ -16,6 +16,7 @@ typedef struct Ball {
 	float radius;
 	int speedX;
 	int speedY;
+	bool isMoving;
 	Color color;
 } Ball;
 
@@ -36,10 +37,31 @@ int main(void) {
 	InitWindow(screenWidth, screenHeight, "Breakout");
 	SetTargetFPS(60);
 
-	Player player = {((screenWidth / 2) - ( 150 / 2)), (screenHeight - (14 + 10)), 6, 150, 14, RAYWHITE};
-	Rectangle playerRec = {player.x, player.y, player.width, player.height};
+	Player player = {
+		.x = ((screenWidth / 2) - ( 150 / 2)),
+		.y = (screenHeight - (14 + 10)),
+		.speed = 6,
+		.width = 150,
+		.height = 14,
+		.color = RAYWHITE
+	};
 
-	Ball ball = {screenWidth / 2, screenHeight / 2, 10, 5, 5, WHITE};
+	Rectangle playerRec = {
+		.x = player.x,
+		.y = player.y,
+		.width = player.width,
+		.height = player.height
+	};
+
+	Ball ball = {
+		.x = (playerRec.x + (playerRec.width / 2)),
+		.y = playerRec.y,
+		.radius= 10,
+		.speedX = 5,
+		.speedY = 5,
+		.isMoving = false,
+		.color = GREEN
+	};
 
 	Brick rowOfBricks[1] = {
 		{ .x = 100, .y = 100, .width = 50, .height = 50, .isHit = false },
@@ -51,19 +73,37 @@ int main(void) {
 
 		if (IsKeyDown(KEY_RIGHT)) {
 			playerRec.x += player.speed;
+			if (ball.isMoving == false) {
+				ball.x += player.speed;
+			}
 		}
 		else if (IsKeyDown(KEY_LEFT)){
 			playerRec.x -= player.speed;
+			if (ball.isMoving == false) {
+				ball.x -= player.speed;
+			}
 		}
 		if (playerRec.x < 0) {
 			playerRec.x = 0;
+			if (ball.isMoving == false) {
+				ball.x = (playerRec.x + (playerRec.width / 2));
+			}
 		}
-		if (playerRec.x > (screenWidth- playerRec.width)) {
+		if (playerRec.x > (screenWidth - playerRec.width)) {
 			playerRec.x = (screenWidth - playerRec.width);
+			if (ball.isMoving == false) {
+				ball.x = (playerRec.x + (playerRec.width / 2));
+			}
 		}
 
-		ball.x += ball.speedX;
-		ball.y += ball.speedY;
+		if (ball.isMoving == true) {
+			ball.x += ball.speedX;
+			ball.y += ball.speedY;
+		}
+
+		if (IsKeyPressed(KEY_SPACE)) {
+			ball.isMoving = true;
+		}
 
 		// if the ball hits left
 		if (ball.x < 0) {
