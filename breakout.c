@@ -81,7 +81,7 @@ int main(void) {
 		{ .x = 580, .y = 210, .width = 150, .height = 50, .isHit = false },
 	};
 
-	char winnerText[30] = { 0 };
+	char playerStatusText[100] = { 0 };
 
 	while (!WindowShouldClose()) {
 
@@ -139,7 +139,25 @@ int main(void) {
 
 		// if the ball hits the bottom
 		if (ball.y > (screenHeight - ball.radius)) {
-			memcpy(winnerText, "You lose", 9);
+			strncpy(playerStatusText, "You lose! Press Enter to restart", sizeof(playerStatusText));
+			playerStatusText[sizeof(playerStatusText) - 1] = '\0';
+		}
+
+		if (strlen(playerStatusText) > 0 && IsKeyPressed(KEY_ENTER)) {
+			ball.x = (playerRec.x + (playerRec.width / 2)),
+			ball.y = playerRec.y - 15,
+			ball.speedX = 0,
+			ball.speedY = -5,
+			ball.isMoving = false;
+
+			strncpy(playerStatusText, "", sizeof(playerStatusText));
+			playerStatusText[sizeof(playerStatusText) - 1] = '\0';
+			
+			for (size_t i = 0; i <sizeof(bricks) / sizeof(bricks[0]); i++) {
+				if (bricks[i].isHit == true) {
+					bricks[i].isHit = false;
+				}
+			}
 		}
 		
 		// if the ball hits the paddle
@@ -170,6 +188,10 @@ int main(void) {
 	
 		BeginDrawing();
 		ClearBackground(BLACK);
+		if (strlen(playerStatusText) > 0) {
+			int playerStatusTextWidth = MeasureText(playerStatusText, 30);
+			DrawText(playerStatusText, screenWidth / 2 - playerStatusTextWidth / 2, screenHeight / 2 - 30, 30, YELLOW);
+		}
 		drawBricks(bricks, sizeof(bricks));
 		DrawRectangleRec(playerRec, player.color);
 		DrawCircle(ball.x, ball.y, ball.radius, ball.color);
