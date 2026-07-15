@@ -2,5 +2,5 @@ Makefile
 raylib.h
 tetris.c
 libraylib.a
-breakout.exe
-tetris.exe
+*.exe
+test.c
