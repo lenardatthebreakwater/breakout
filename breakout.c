@@ -31,6 +31,8 @@ typedef struct Brick {
 
 void drawBricks(Brick bricks[], size_t bricksSize);
 
+bool checkIfThereAreBricksLeft(Brick bricks[], size_t bricksSize);
+
 int main(void) {
 	int screenWidth = 800;
 	int screenHeight = 600;
@@ -138,8 +140,13 @@ int main(void) {
 		}
 
 		// if the ball hits the bottom
-		if (ball.y > (screenHeight - ball.radius)) {
-			strncpy(playerStatusText, "You lose! Press Enter to restart", sizeof(playerStatusText));
+		if (strlen(playerStatusText) == 0 && ball.y > (screenHeight - ball.radius)) {
+			strncpy(playerStatusText, "You lose! Press Enter to play again", sizeof(playerStatusText));
+			playerStatusText[sizeof(playerStatusText) - 1] = '\0';
+		}
+
+		if (strlen(playerStatusText) == 0 && checkIfThereAreBricksLeft(bricks, sizeof(bricks)) == false) {
+			strncpy(playerStatusText, "You won! Press Enter to play again", sizeof(playerStatusText));
 			playerStatusText[sizeof(playerStatusText) - 1] = '\0';
 		}
 
@@ -176,6 +183,7 @@ int main(void) {
 			}
 		}
 
+		// this is for collision checks between the ball and each of the bricks
 		for (size_t i = 0; i <sizeof(bricks) / sizeof(bricks[0]); i++) {
 			if (bricks[i].isHit == false && CheckCollisionCircleRec((Vector2){ .x = ball.x, .y = ball.y }, ball.radius, (Rectangle){ .x = bricks[i].x, .y = bricks[i].y, .width = bricks[i].width, .height = bricks[i].height })) {
 				if (ball.speedX == 0) {
@@ -212,4 +220,13 @@ void drawBricks(Brick bricks[], size_t bricksSize) {
 			DrawRectangle((*(bricks + i)).x, (*(bricks + i)).y, (*(bricks + i)).width, (*(bricks + i)).height, RAYWHITE);
 		}
 	}
+}
+
+bool checkIfThereAreBricksLeft(Brick bricks[], size_t bricksSize) {
+	for (size_t i = 0; i < bricksSize / sizeof(bricks[0]); i++) {
+		if (bricks[i].isHit == false) {
+			return true;
+		}
+	}
+	return false;
 }
