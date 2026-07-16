@@ -118,6 +118,8 @@ int main(void) {
 		}
 
 		if (IsKeyPressed(KEY_SPACE)) {
+			strncpy(playerStatusText, "", sizeof(playerStatusText));
+			playerStatusText[sizeof(playerStatusText) - 1] = '\0';
 			ball.isMoving = true;
 		}
 
@@ -139,17 +141,25 @@ int main(void) {
 			ball.speedY *= -1;
 		}
 
-		// if the ball hits the bottom
+		// if the ball hits the bottom aka if the player loses
 		if (strlen(playerStatusText) == 0 && ball.y > (screenHeight - ball.radius)) {
 			strncpy(playerStatusText, "You lose! Press Enter to play again", sizeof(playerStatusText));
 			playerStatusText[sizeof(playerStatusText) - 1] = '\0';
 		}
 
+		// if the player wins
 		if (strlen(playerStatusText) == 0 && checkIfThereAreBricksLeft(bricks, sizeof(bricks)) == false) {
 			strncpy(playerStatusText, "You won! Press Enter to play again", sizeof(playerStatusText));
 			playerStatusText[sizeof(playerStatusText) - 1] = '\0';
 		}
 
+		// if the player just started playinging or when the game is restarted
+		if (strlen(playerStatusText) == 0 && ball.isMoving == false && checkIfThereAreBricksLeft(bricks, sizeof(bricks)) == true) {
+			strncpy(playerStatusText, "Press Space to move the ball", sizeof(playerStatusText));
+			playerStatusText[sizeof(playerStatusText) - 1] = '\0';
+		}
+
+		// to restart the game
 		if (strlen(playerStatusText) > 0 && IsKeyPressed(KEY_ENTER)) {
 			ball.x = (playerRec.x + (playerRec.width / 2)),
 			ball.y = playerRec.y - 15,
